@@ -38,7 +38,6 @@ public class Server {
     }
 
     public void storeMessage(String message){
-        //gain understanding about this function
         LocalDateTime timestamp = LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedDateTimestamp = timestamp.format(formatter);
