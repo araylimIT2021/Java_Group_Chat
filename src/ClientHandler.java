@@ -1,5 +1,4 @@
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -41,6 +40,7 @@ public class ClientHandler implements Runnable{
                 }
             }
             catch(IOException e){
+                removeClientHandler();
                 closeEverything(socket, bufferedReader, bufferedWriter);
                 break;
             }

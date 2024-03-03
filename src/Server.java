@@ -33,7 +33,7 @@ public class Server {
             }
         }
         catch(IOException e){
-
+            closeServer();
         }
     }
 
@@ -45,8 +45,11 @@ public class Server {
         writer.println(formattedDateTimestamp + " - " + message);
         writer.flush();
     }
-    public void closeServerSocket(){
+    public void closeServer(){
         try{
+            if (writer != null) {
+                writer.close();
+            }
             if(serverSocket != null){
                 serverSocket.close();
             }
