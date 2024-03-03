@@ -1,4 +1,5 @@
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 
@@ -8,12 +9,14 @@ public class ClientHandler implements Runnable{
     private Socket socket; //new socket from the server, to establish connection with client and server
     private BufferedReader bufferedReader; //reading specific msg sent from the client
     private BufferedWriter bufferedWriter; //send msg to clients
+    private Server server;
 
     private String clientUsername;
 
-    public ClientHandler(Socket socket){
+    public ClientHandler(Socket socket, Server server){
         try{
             this.socket = socket;
+            this.server = server;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.clientUsername = bufferedReader.readLine();
@@ -32,7 +35,10 @@ public class ClientHandler implements Runnable{
         while(socket.isConnected()){
             try{
                 messageFromClient = bufferedReader.readLine();
-                broadcastMessage(messageFromClient);
+                if (messageFromClient != null) {
+                    server.storeMessage(messageFromClient); // Store the message using Server
+                    broadcastMessage(messageFromClient);
+                }
             }
             catch(IOException e){
                 closeEverything(socket, bufferedReader, bufferedWriter);

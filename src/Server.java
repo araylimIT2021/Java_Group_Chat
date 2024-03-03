@@ -1,12 +1,23 @@
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Server {
     private ServerSocket serverSocket;
+    private PrintWriter writer;
 
     public Server(ServerSocket serverSocket){
-        this.serverSocket = serverSocket;
+        try{
+            this.serverSocket = serverSocket;
+            writer = new PrintWriter(new FileWriter("C:/Users/Arailym/Documents/Basics of Distributed Systems/chat_message_group_chat.txt"));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void startServer(){
@@ -14,7 +25,8 @@ public class Server {
             while(!serverSocket.isClosed()){
                 Socket socket = serverSocket.accept();
                 System.out.println("A new client has connected! ");
-                ClientHandler clientHandler = new ClientHandler(socket);
+
+                ClientHandler clientHandler = new ClientHandler(socket, this);
                 Thread thread = new Thread(clientHandler);
                 thread.start();
 
@@ -23,6 +35,15 @@ public class Server {
         catch(IOException e){
 
         }
+    }
+
+    public void storeMessage(String message){
+        //gain understanding about this function
+        LocalDateTime timestamp = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formattedDateTimestamp = timestamp.format(formatter);
+        writer.println(formattedDateTimestamp + " - " + message);
+        writer.flush();
     }
     public void closeServerSocket(){
         try{
